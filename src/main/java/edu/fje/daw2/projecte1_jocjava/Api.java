@@ -22,13 +22,15 @@ import java.util.List;
  * Servei web rest amb Java
  * URL
  * localhost:8080/api/daw2/consultarTots
- * sergi.grau@fje.edu
- * version 1.0 11.11.21
+ * Pol Sanz i Angel Torres
+ *
  */
 public class Api {
 
     @Context
     private UriInfo context;
+    private static List<Partida> partides = new ArrayList<>();
+
     private static List<Alumne> alumnes = new ArrayList<>();
 
     public Api() {
@@ -40,10 +42,53 @@ public class Api {
         }
 
     }
+
     @GET
-    @Path("/hey")
-    public String hola() {
-        return "Hola";
+    @Path("/consultarEstatPartida/partides")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String consultarEstatPartida() {
+        return partides.toString();
+    }
+
+    @GET
+    @Path("/consultarEstatPartida/{codiPartida}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String consultarPartida(@PathParam("codiPartida") int codiPartida) {
+        for (Partida p : partides) {
+            if (p.getCodiPartida() == codiPartida) {
+                return p.toString();
+            }else{
+                return "La partida no existeix";
+            }
+        }
+        return "";
+    }
+
+    @POST
+    @Path("/iniciarJoc/codiPartida")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response crearPartida(@FormParam("codiPartida") int codiPartida, @FormParam("jugador") String jugador,
+                                 @FormParam("moviment") String moviment,@FormParam("torn") String torn, @FormParam("vicJug1") int vicJug1,
+                                 @FormParam("vicJug2") int vicJug2) {
+
+        partides.add(new Partida(codiPartida,jugador, moviment,torn,vicJug1,vicJug2));
+        return Response.status(200).entity("La partida ha estat creada!").build();
+    }
+
+    @Path("/acabarJoc/{codiPartida}")
+    @DELETE
+    @Produces(MediaType.TEXT_PLAIN)
+    public String esborrarPartida(@PathParam("codiPartida") int codiPartida) {
+        for (Partida p : partides) {
+            if (p.getCodiPartida() == codiPartida) {
+                partides.remove(p);
+                return "Partida eliminada!";
+            }else{
+                return "No pots eliminar una partida que no existeix!";
+            }
+        }
+        return "";
     }
 
     @Path("/consultarTOTS")
