@@ -8,12 +8,6 @@ import jakarta.ws.rs.Path;
 
 @ApplicationPath("/api")
 public class App extends Application {
-//PROCESSORS D', INICIALTZACIÓ, bd, xml, sòcols (sockets), etc...
-    @GET
-    @Path("/hola")
-    public String hola() {
-        return "Hola";
-    }
 
 }
 

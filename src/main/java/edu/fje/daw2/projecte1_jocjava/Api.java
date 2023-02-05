@@ -30,21 +30,11 @@ public class Api {
     @Context
     private UriInfo context;
     private static List<Partida> partides = new ArrayList<>();
-
-    private static List<Alumne> alumnes = new ArrayList<>();
-
     public static int contador = 0;
     private static String movJug1 = "";
     private static String movJug2 = "";
 
     public Api() {
-
-        if (alumnes.size() == 0) {
-            alumnes.add(new Alumne(2, "JOAN", 7));
-            alumnes.add(new Alumne(1, "SERGI", 8));
-            alumnes.add(new Alumne(3, "ANNA", 6));
-        }
-
     }
 
     @GET
@@ -80,47 +70,6 @@ public class Api {
         return Response.status(200).entity("La partida ha estat creada!").build();
     }
 
-    @Path("/acabarJoc/{codiPartida}")
-    @DELETE
-    @Produces(MediaType.TEXT_PLAIN)
-    public String esborrarPartida(@PathParam("codiPartida") int codiPartida) {
-        for (Partida p : partides) {
-            if (p.getCodiPartida() == codiPartida) {
-                partides.remove(p);
-                return "Partida eliminada!";
-            }else{
-                return "No pots eliminar una partida que no existeix!";
-            }
-        }
-        return "";
-    }
-
-    @Path("/consultarTOTS")
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String consultarTotsAlumnes() {
-        return alumnes.toString();
-    }
-
-    @Path("/consultarUn/{alumne}")
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String consultarUn(@PathParam("alumne") int id) {
-        Alumne temp = new Alumne(id, "", 0);
-        int pos = alumnes.indexOf(temp);
-        return alumnes.get(pos).toString();
-    }
-
-    @Path("/consultarUnQuery")
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String consultarUnQuery(@QueryParam("id") int id) {
-        Alumne temp = new Alumne(id, "", 0);
-        int pos = alumnes.indexOf(temp);
-        return alumnes.get(pos).toString();
-    }
-
-
     @PUT
     @Path("/moureJugador/codiPartida/jugador/tipusMoviment")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -154,22 +103,22 @@ public class Api {
                 System.out.println(movJug1 + movJug2);
                 if (movJug1.equals("paper") && movJug2.equals("pedra")) {
                     p.setVicJug1(p.getVicJug1() + 1);
-                    //Return Response.status(200).entity("El jugador 1 ha escollit PAPER, el Jugador 2 PEDRA. \nEl Jugador 1 ha guanyat aquesta ronda").build();
+                    return Response.status(200).entity("El jugador 1 ha escollit PAPER, el Jugador 2 PEDRA. \nEl Jugador 1 ha guanyat aquesta ronda").build();
                 } else if (movJug1.equals("pedra") && movJug2.equals("paper")) {
                     p.setVicJug2(p.getVicJug2() + 1);
-                    //Return Response.status(200).entity("El jugador 1 ha escollit PEDRA, el Jugador 2 PAPER. \nEl Jugador 2 ha guanyat aquesta ronda").build();
+                    return Response.status(200).entity("El jugador 1 ha escollit PEDRA, el Jugador 2 PAPER. \nEl Jugador 2 ha guanyat aquesta ronda").build();
                 } else if (movJug1.equals("paper") && movJug2.equals("tissores")) {
                     p.setVicJug2(p.getVicJug2() + 1);
-                    //return Response.status(200).entity("El jugador 1 ha escollit PAPER, el Jugador 2 TISSORES. \nEl Jugador 2 ha guanyat aquesta ronda").build();
+                    return Response.status(200).entity("El jugador 1 ha escollit PAPER, el Jugador 2 TISSORES. \nEl Jugador 2 ha guanyat aquesta ronda").build();
                 } else if (movJug1.equals("tissores") && movJug2.equals("paper")) {
                     p.setVicJug1(p.getVicJug1() + 1);
-                    //return Response.status(200).entity("El jugador 1 ha escollit TISSORES, el Jugador 2 PAPER. \nEl Jugador 1 ha guanyat aquesta ronda").build();
+                    return Response.status(200).entity("El jugador 1 ha escollit TISSORES, el Jugador 2 PAPER. \nEl Jugador 1 ha guanyat aquesta ronda").build();
                 } else if (movJug1.equals("pedra") && movJug2.equals("tissores")) {
                     p.setVicJug1(p.getVicJug1() + 1);
-                    //return Response.status(200).entity("El jugador 1 ha escollit PEDRA, el Jugador 2 TISSORES. \nEl Jugador 1 ha guanyat aquesta ronda").build();
+                    return Response.status(200).entity("El jugador 1 ha escollit PEDRA, el Jugador 2 TISSORES. \nEl Jugador 1 ha guanyat aquesta ronda").build();
                 } else if (movJug1.equals("tissores") && movJug2.equals("pedra")) {
                     p.setVicJug2(p.getVicJug2() + 1);
-                    //return Response.status(200).entity("El jugador 1 ha escollit TISSORES, el Jugador 2 PEDRA. \nEl Jugador 2 ha guanyat aquesta ronda").build();
+                    return Response.status(200).entity("El jugador 1 ha escollit TISSORES, el Jugador 2 PEDRA. \nEl Jugador 2 ha guanyat aquesta ronda").build();
                 }else{
                     movJug1 = "";
                     movJug2 = "";
@@ -182,7 +131,6 @@ public class Api {
             } else if (p.getVicJug2() == 3) {
                 return Response.status(200).entity("FELICITATS jugador 2, has guanyat!").build();
             } else {
-                // RECUERDA CAMBIAR EESTO PORQUE NO SALE QUIEN GANA I COMPROVAR QUE FUNCI
                 return Response.status(200).entity("El jugador " + p.getTorn() + " ha de fer el seu moviment!").build();
             }
         }
@@ -190,40 +138,18 @@ public class Api {
         return Response.status(200).entity("La partida no existeix???").build();
     }
 
-
-    @PUT
-    @Path("/modificarAlumne")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response modificarAlumne(@FormParam("id") int id,
-                                @FormParam("nom") String nouNom, @FormParam("nota") int novaNota) {
-
-        Alumne temp = new Alumne(id, nouNom, novaNota);
-        int pos = alumnes.indexOf(temp);
-        alumnes.get(pos).setNom(nouNom);
-        alumnes.get(pos).setNota(novaNota);
-        return Response.status(200).entity("alumne modificat").build();
-    }
-
-    @POST
-    @Path("/afegirAlumne")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response afegirAlumne(@FormParam("id") int id,
-                                 @FormParam("nom") String nom, @FormParam("nota") int nota) {
-
-        alumnes.add(new Alumne(id, nom, nota));
-        return Response.status(200).entity("alumne creat").build();
-    }
-
-    @Path("/esborrarAlumne/{id}")
+    @Path("/acabarJoc/{codiPartida}")
     @DELETE
     @Produces(MediaType.TEXT_PLAIN)
-    public void esborrarAlumne(@PathParam("id") int id) {
-        Alumne temp = new Alumne(id, "", 0);
-        int pos = alumnes.indexOf(temp); // -1
-        alumnes.remove(pos); //ERROR
-
+    public String esborrarPartida(@PathParam("codiPartida") int codiPartida) {
+        for (Partida p : partides) {
+            if (p.getCodiPartida() == codiPartida) {
+                partides.remove(p);
+                return "Partida eliminada!";
+            }else{
+                return "No pots eliminar una partida que no existeix!";
+            }
+        }
+        return "";
     }
-
 }
