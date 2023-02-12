@@ -65,9 +65,14 @@ public class Api {
     public Response crearPartida(@FormParam("codiPartida") int codiPartida, @FormParam("jugador") String jugador,
                                  @FormParam("moviment") String moviment,@FormParam("torn") String torn, @FormParam("vicJug1") int vicJug1,
                                  @FormParam("vicJug2") int vicJug2) {
+        for (Partida p : partides) {
+            if (p.getCodiPartida() == codiPartida) {
+                return Response.status(200).entity("La partida ja existeix!").build();
+            }
+        }
 
         partides.add(new Partida(codiPartida,jugador, moviment,torn,vicJug1,vicJug2));
-        return Response.status(200).entity("La partida ha estat creada!").build();
+        return Response.status(200).entity("La partida amb el codi "+ codiPartida +" ha estat creada!").build();
     }
 
     @PUT
@@ -77,6 +82,9 @@ public class Api {
     public Response modificarAlumne(@FormParam("codiPartida") int codiPartida, @FormParam("jugador") String jugador,
                                     @FormParam("tipusMoviment") String tipusMoviment) {
 
+        if (!tipusMoviment.equals("pedra") && !tipusMoviment.equals("paper") && !tipusMoviment.equals("tisores")) {
+            return Response.status(200).entity("El moviment ha de ser paper, pedra o tisores!").build();
+        }
         for (Partida p : partides) {
             if (p.getCodiPartida() == codiPartida) {
                 if (p.getTorn().equals(jugador)) {
@@ -97,34 +105,33 @@ public class Api {
             }/*else{
                 return Response.status(200).entity("La partida no existeix!").build();
             }*/
-            // return partida
             if (contador == 2) {
                 contador = 0;
-                System.out.println(movJug1 + movJug2);
                 if (movJug1.equals("paper") && movJug2.equals("pedra")) {
                     p.setVicJug1(p.getVicJug1() + 1);
                     return Response.status(200).entity("El jugador 1 ha escollit PAPER, el Jugador 2 PEDRA. \nEl Jugador 1 ha guanyat aquesta ronda").build();
                 } else if (movJug1.equals("pedra") && movJug2.equals("paper")) {
                     p.setVicJug2(p.getVicJug2() + 1);
                     return Response.status(200).entity("El jugador 1 ha escollit PEDRA, el Jugador 2 PAPER. \nEl Jugador 2 ha guanyat aquesta ronda").build();
-                } else if (movJug1.equals("paper") && movJug2.equals("tissores")) {
+                } else if (movJug1.equals("paper") && movJug2.equals("tisores")) {
                     p.setVicJug2(p.getVicJug2() + 1);
-                    return Response.status(200).entity("El jugador 1 ha escollit PAPER, el Jugador 2 TISSORES. \nEl Jugador 2 ha guanyat aquesta ronda").build();
-                } else if (movJug1.equals("tissores") && movJug2.equals("paper")) {
+                    return Response.status(200).entity("El jugador 1 ha escollit PAPER, el Jugador 2 TISORES. \nEl Jugador 2 ha guanyat aquesta ronda").build();
+                } else if (movJug1.equals("tisores") && movJug2.equals("paper")) {
                     p.setVicJug1(p.getVicJug1() + 1);
-                    return Response.status(200).entity("El jugador 1 ha escollit TISSORES, el Jugador 2 PAPER. \nEl Jugador 1 ha guanyat aquesta ronda").build();
-                } else if (movJug1.equals("pedra") && movJug2.equals("tissores")) {
+                    return Response.status(200).entity("El jugador 1 ha escollit TISORES, el Jugador 2 PAPER. \nEl Jugador 1 ha guanyat aquesta ronda").build();
+                } else if (movJug1.equals("pedra") && movJug2.equals("tisores")) {
                     p.setVicJug1(p.getVicJug1() + 1);
-                    return Response.status(200).entity("El jugador 1 ha escollit PEDRA, el Jugador 2 TISSORES. \nEl Jugador 1 ha guanyat aquesta ronda").build();
-                } else if (movJug1.equals("tissores") && movJug2.equals("pedra")) {
+                    return Response.status(200).entity("El jugador 1 ha escollit PEDRA, el Jugador 2 TISORES. \nEl Jugador 1 ha guanyat aquesta ronda").build();
+                } else if (movJug1.equals("tisores") && movJug2.equals("pedra")) {
                     p.setVicJug2(p.getVicJug2() + 1);
-                    return Response.status(200).entity("El jugador 1 ha escollit TISSORES, el Jugador 2 PEDRA. \nEl Jugador 2 ha guanyat aquesta ronda").build();
+                    return Response.status(200).entity("El jugador 1 ha escollit tisores, el Jugador 2 PEDRA. \nEl Jugador 2 ha guanyat aquesta ronda").build();
                 }else{
                     movJug1 = "";
                     movJug2 = "";
                     p.setTorn("jug1");
-                    return Response.status(200).entity("Els dos jugadors heu triat"+tipusMoviment +".Es un EMPAT!").build();
+                    return Response.status(200).entity("Els dos jugadors heu triat "+tipusMoviment +". Es un EMPAT!").build();
                 }
+                // el return deberia ir por aca
             }
             if (p.getVicJug1() == 3) {
                 return Response.status(200).entity("FELICITATS jugador 1, has guanyat!").build();
@@ -134,7 +141,6 @@ public class Api {
                 return Response.status(200).entity("El jugador " + p.getTorn() + " ha de fer el seu moviment!").build();
             }
         }
-        //return "";
         return Response.status(200).entity("La partida no existeix???").build();
     }
 
@@ -145,7 +151,7 @@ public class Api {
         for (Partida p : partides) {
             if (p.getCodiPartida() == codiPartida) {
                 partides.remove(p);
-                return "Partida eliminada!";
+                return "La partida amb el codi "+ codiPartida +" ha estat eliminada!";
             }else{
                 return "No pots eliminar una partida que no existeix!";
             }
