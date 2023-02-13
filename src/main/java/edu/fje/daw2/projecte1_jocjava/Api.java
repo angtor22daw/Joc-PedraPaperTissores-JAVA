@@ -33,6 +33,7 @@ public class Api {
     public static int contador = 0;
     private static String movJug1 = "";
     private static String movJug2 = "";
+    private static String missatge = "";
 
     public Api() {
     }
@@ -109,22 +110,22 @@ public class Api {
                 contador = 0;
                 if (movJug1.equals("paper") && movJug2.equals("pedra")) {
                     p.setVicJug1(p.getVicJug1() + 1);
-                    return Response.status(200).entity("El jugador 1 ha escollit PAPER, el Jugador 2 PEDRA. \nEl Jugador 1 ha guanyat aquesta ronda").build();
+                    missatge = "El jugador 1 ha escollit PAPER, el Jugador 2 PEDRA. \nEl Jugador 1 ha guanyat aquesta ronda.";
                 } else if (movJug1.equals("pedra") && movJug2.equals("paper")) {
                     p.setVicJug2(p.getVicJug2() + 1);
-                    return Response.status(200).entity("El jugador 1 ha escollit PEDRA, el Jugador 2 PAPER. \nEl Jugador 2 ha guanyat aquesta ronda").build();
+                    missatge = "El jugador 1 ha escollit PEDRA, el Jugador 2 PAPER. \nEl Jugador 2 ha guanyat aquesta ronda.";
                 } else if (movJug1.equals("paper") && movJug2.equals("tisores")) {
                     p.setVicJug2(p.getVicJug2() + 1);
-                    return Response.status(200).entity("El jugador 1 ha escollit PAPER, el Jugador 2 TISORES. \nEl Jugador 2 ha guanyat aquesta ronda").build();
+                    missatge = "El jugador 1 ha escollit PAPER, el Jugador 2 TISORES. \nEl Jugador 2 ha guanyat aquesta ronda.";
                 } else if (movJug1.equals("tisores") && movJug2.equals("paper")) {
                     p.setVicJug1(p.getVicJug1() + 1);
-                    return Response.status(200).entity("El jugador 1 ha escollit TISORES, el Jugador 2 PAPER. \nEl Jugador 1 ha guanyat aquesta ronda").build();
+                    missatge = "El jugador 1 ha escollit TISORES, el Jugador 2 PAPER. \nEl Jugador 1 ha guanyat aquesta ronda.";
                 } else if (movJug1.equals("pedra") && movJug2.equals("tisores")) {
                     p.setVicJug1(p.getVicJug1() + 1);
-                    return Response.status(200).entity("El jugador 1 ha escollit PEDRA, el Jugador 2 TISORES. \nEl Jugador 1 ha guanyat aquesta ronda").build();
+                    missatge ="El jugador 1 ha escollit PEDRA, el Jugador 2 TISORES. \nEl Jugador 1 ha guanyat aquesta ronda.";
                 } else if (movJug1.equals("tisores") && movJug2.equals("pedra")) {
                     p.setVicJug2(p.getVicJug2() + 1);
-                    return Response.status(200).entity("El jugador 1 ha escollit tisores, el Jugador 2 PEDRA. \nEl Jugador 2 ha guanyat aquesta ronda").build();
+                    missatge = "El jugador 1 ha escollit tisores, el Jugador 2 PEDRA. \nEl Jugador 2 ha guanyat aquesta ronda.";
                 }else{
                     movJug1 = "";
                     movJug2 = "";
@@ -134,20 +135,22 @@ public class Api {
                 // el return deberia ir por aca
             }
             if (p.getVicJug1() == 3) {
-                return Response.status(200).entity("FELICITATS jugador 1, has guanyat!").build();
+                return Response.status(200).entity(missatge+"\nFELICITATS jugador 1, has guanyat la partida!").build();
             } else if (p.getVicJug2() == 3) {
-                return Response.status(200).entity("FELICITATS jugador 2, has guanyat!").build();
-            } else {
-                return Response.status(200).entity("El jugador " + p.getTorn() + " ha de fer el seu moviment!").build();
+                return Response.status(200).entity(missatge+"\nFELICITATS jugador 2, has guanyat la partida!").build();
+            } else if( contador == 0){
+                return Response.status(200).entity(missatge).build();
             }
+            return Response.status(200).entity("El jugador " + p.getTorn() + " ha de fer el seu moviment!").build();
         }
-        return Response.status(200).entity("La partida no existeix???").build();
+        return Response.status(200).entity("La partida no existeix??? bobo").build();
     }
 
-    @Path("/acabarJoc/{codiPartida}")
+    @Path("/acabarJoc/codiPartida")
     @DELETE
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_PLAIN)
-    public String esborrarPartida(@PathParam("codiPartida") int codiPartida) {
+    public String esborrarPartida(@FormParam("codiPartida") int codiPartida) {
         for (Partida p : partides) {
             if (p.getCodiPartida() == codiPartida) {
                 partides.remove(p);
