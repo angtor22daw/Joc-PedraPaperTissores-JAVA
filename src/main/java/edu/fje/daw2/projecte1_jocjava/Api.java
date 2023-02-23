@@ -52,11 +52,10 @@ public class Api {
         for (Partida p : partides) {
             if (p.getCodiPartida() == codiPartida) {
                 return p.toString();
-            }else{
-                return "La partida no existeix";
             }
         }
-        return "";
+
+        return "La partida no existeix";
     }
 
     @POST
@@ -155,10 +154,8 @@ public class Api {
             if (p.getCodiPartida() == codiPartida) {
                 partides.remove(p);
                 return "La partida amb el codi "+ codiPartida +" ha estat eliminada!";
-            }else{
-                return "No pots eliminar una partida que no existeix!";
             }
         }
-        return "";
+        return "No pots eliminar una partida que no existeix!";
     }
 }
